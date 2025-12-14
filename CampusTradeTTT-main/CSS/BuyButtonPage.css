@@ -1,0 +1,224 @@
+/* ===== Brand Variables ===== */
+:root{
+  --navH: 130px;            /* adjust if your header height changes */
+  --teal-bg: #073642;
+  --orange: #FF6600;
+  --orange-press: #e65c00;
+  --ink: rgba(255,255,255,0.36);
+}
+
+/* ===== Page section ===== */
+.content-section{
+  display:flex;
+  justify-content:center;              /* center the card */
+  align-items:flex-start;
+  background:var(--teal-bg);
+  padding: calc(var(--navH) + 20px) 0 120px;   /* space from header + bottom */
+  min-height: 100vh;                    /* keep page tall */
+  box-sizing:border-box;
+  width: 100%;
+}
+
+/* ==== FORCE THE CARD TO SPAN THE BROWN STRIP ==== */
+.content-section {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* ===== Main card ===== */
+.buy-box {
+  position: relative; /* anchors top-right buttons */
+  background: #FBEEDB;
+  border: 12px solid var(--orange);
+  border-radius: 14px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
+
+  /* grid layout: Book | Seller | Poster on top, note row below spanning all */
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 420px; /* Book | Seller | Image */
+  grid-template-areas:
+    "left info poster"
+    "note note note";
+  gap: 20px;
+
+  padding: 32px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Map areas */
+.buy-left  { grid-area: left;  margin-top: 20px; }
+.buy-right { grid-area: info;  margin-top: 20px; }
+.buy-graphic{ grid-area: poster; display:flex; justify-content:flex-end; align-self:start; padding-top: 20px; }
+
+/* New full-width note area (spans all columns) */
+.buy-note {
+  grid-area: note;
+  display: flex;
+  flex-direction: column;      /* stack note and button */
+  align-items: center;         /* center them under the images */
+  justify-content: center;
+  gap: 14px;
+  margin-top: 8px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* Titles & text */
+.hero-title{
+  margin:0 0 14px;
+  color:#073642;
+  font-weight:800;
+  font-size:28px;
+}
+.buy-right h2{
+  margin:0 0 12px;
+  font-size:26px;
+  font-weight:800;
+  color:#e66b00;
+}
+
+/* Seller note (style kept but we will move markup into .buy-note) */
+.note{
+  background:#FFF8E9;
+  border-left:6px solid #FF9900;
+  padding:14px 14px;
+  border-radius:8px;
+  font-size:1rem;
+  max-width:960px;
+  box-sizing:border-box;
+  text-align: center;
+}
+
+/* Poster image */
+.thankyou-image{
+  width:100%;
+  max-width:320px;   /* control poster width */
+  height:auto;
+  border-radius:10px;
+  object-fit:contain;
+  background:var(--teal-bg); /* blends if PNG has transparent edges */
+  box-shadow:0 6px 16px rgba(0,0,0,.22);
+  margin-top: 40px;
+}
+
+/* Top-right buttons inside the card */
+.top-actions-inside{
+  position:absolute;
+  top:14px;
+  right:16px;
+  display:flex;
+  gap:15px;
+  margin-right: 40px;
+  z-index:6;
+}
+.top-actions-inside .button{
+  border:none;
+  border-radius:6px;
+  padding:8px 14px;
+  font-weight:900;
+  cursor:pointer;
+  color:#fff;
+  font-size:1rem;
+  text-decoration:none;
+}
+.top-actions-inside .switch{ background:var(--orange); }
+.top-actions-inside .switch:hover{ background:var(--orange-press); }
+.top-actions-inside .logout{ background:#113a44; }
+.top-actions-inside .logout:hover{ background:#0c3038; }
+
+/* Links */
+.buy-right a{ color:#e66b00; text-decoration:none; }
+.buy-right a:hover{ text-decoration:underline; }
+
+/* Message Button */
+.message-button {
+  display: inline-block;
+  padding: 12px 28px;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  min-width: 190px; /* ensures button is long enough */
+  text-align: center;
+  margin-top: 8px;
+  background-color: #e66b00;
+  border: 2px dashed #e66b00;
+  font-size: 20px;
+}
+
+/* a-message override (if you use anchor) */
+a.message-button {
+  color: white !important;
+  text-decoration: none;
+  display:inline-block;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1100px){
+  .buy-box{
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "left info"
+      "poster poster"
+      "note note";
+  }
+  .buy-graphic{ justify-content:flex-start; }
+  .thankyou-image{ max-width: 300px; }
+}
+@media (max-width: 720px){
+  .buy-box{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "left"
+      "info"
+      "poster"
+      "note";
+    gap:20px;
+    padding:36px 20px 28px;
+  }
+  .top-actions-inside{ top:10px; right:10px; }
+  .thankyou-image{ max-width: 260px; margin: 6px 0; }
+  .message-button{ font-size: 18px; min-width: 160px; }
+}
+
+/* === Align the book image circle perfectly between title and details === */
+.book-upload {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  left: -45px;  /* move the circle slightly left; adjust value as needed */
+  margin-bottom: 70px; /* space before book details text */
+}
+
+.book-cover-view img {
+  width: 160px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.buy-right .avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.buy-right .avatar img {
+  width: 110%;
+  height: 110%;
+  object-fit: cover;
+  display: block;
+}
+
+

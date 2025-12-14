@@ -1,0 +1,293 @@
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  background-color: #003748;
+  padding: 40px 0;
+}
+
+.login-container {
+  background-color: #FFF3E0;
+  border: 3px solid #FF6600;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.TitleLogin {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FF6600;
+  margin-bottom: 20px;
+}
+
+/* Input fields */
+.form_box input[type="email"],
+.form_box input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 16px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+/* Login Button */
+.form_box .button {
+  width: 100%;
+  background-color: #FF6600;
+  color: #fff3E0;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form_box .button:hover {
+  background-color: #e65500;
+}
+
+/* Links below button */
+.login-links {
+  margin-top: 20px;
+  color: #003748;
+  font-size: 0.95rem;
+}
+
+.login-links a {
+  color: #FF6600;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-links a:hover {
+  text-decoration: underline;
+}
+
+/* Center the login box perfectly on the page */
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;  /* adjusts spacing vertically */
+}
+
+/* Optional: add some breathing room for smaller screens */
+@media (max-width: 768px) {
+  main {
+    min-height: 70vh;
+    padding: 20px;
+  }
+}
+
+/* Match CampusTrade look (beige container, orange accent) */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  background-color: #003748;
+  padding: 40px 0;
+}
+
+.login-container {
+  background-color: #FFF3E0;
+  border: 3px solid #FF6600;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.TitleLogin {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FF6600;
+  margin-bottom: 20px;
+}
+
+/* Input fields */
+.form_box input[type="email"],
+.form_box input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 16px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+/* Login Button */
+.form_box .button {
+  width: 100%;
+  background-color: #FF6600;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+/* ---------- Login Page Layout ---------- */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  background-color: #003748;
+  padding: 40px 0;
+}
+
+/* The beige rectangle around both logo + form */
+.login-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* side by side */
+  background-color: #FFF3E0;
+  border: 3px solid #FF6600;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 900px;
+  width: 90%;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  align-items: center;
+  gap: 40px;
+}
+
+/* Left: Logo section */
+.login-logo-side {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-logo-side img {
+  width: 300px;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+/* Right: Login form section */
+.login-form-side {
+  text-align: center;
+}
+
+/* Login title */
+.TitleLogin {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #FF6600;
+  margin-bottom: 20px;
+}
+
+/* Input styles */
+.form_box input[type="email"],
+.form_box input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 16px;
+  border: 2px solid #FFD8A8;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+/* Login button */
+.form_box .button {
+  width: 100%;
+  background-color: #FF6600;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.form_box .button:hover {
+  background-color: #e65500;
+}
+
+/* Links */
+.login-links {
+  margin-top: 16px;
+  color: #003748;
+  font-size: 0.95rem;
+}
+.login-links a {
+  color: #FF6600;
+  text-decoration: none;
+  font-weight: 600;
+}
+.login-links a:hover {
+  text-decoration: underline;
+}
+
+/* MinnState note */
+.note.orange {
+  background-color: #FFEFD5;
+  color: #333;
+  font-size: 0.9rem;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 16px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .login-box {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .login-logo-side {
+    margin-bottom: 20px;
+  }
+}
+
+/* SignUp Page Error handling Styling */
+.alert { 
+  display: flex;              
+  align-items: flex-start;
+  gap: .5rem;
+  padding: 10px; 
+  border: 1px solid #ccc; 
+  margin: 10px 0; 
+  border-radius: 6px; 
+}
+.alert.error { 
+  border-color: #e00; 
+  background: #fee; 
+  color: #900; 
+}
+.alert.error::before {
+  content: "❌";
+  font-size: 1rem;
+  line-height: 1;
+  flex: 0 0 auto;
+  margin-top: 2px;           
+}
+.alert ul {
+  list-style: none;           
+  margin: 0;
+  padding: 0;
+}
+.alert li {
+  margin: 2px 0;
+}
+.alert p {
+  margin: 2px 0;
+}
+

@@ -1,0 +1,27 @@
+
+Current Timeline:
+
+10/13/2025:
+    - 1-2 pages (low fidelity prototype)
+    - Get everyone set up with xampp and apache for localhost server
+    - Ensure make sure Github pulling and pushing to directory is functioning
+
+10/20/2025:
+    - Review and revise design documents. (Domain, class, use-case)
+    - 5/8 frontend pages created (HTML, CSS)
+    - Folder structure established (HTML, CSS, PHP classes and functions)
+    - SQL Query to create database and known entities established
+
+10/27/2025:
+    - 8/8 frontend pages created (HTML, CSS)
+    - Classes and basic webpage functions developed (PHP)
+
+11/3/2025:
+
+11/10/2025:
+
+11/17/2025:
+
+11/24/2025:
+
+12/1/2025:

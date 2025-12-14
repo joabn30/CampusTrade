@@ -1,0 +1,31 @@
+This file is intended to be used for notes/pre-status report throughout the project.
+
+
+Identified Pages:
+
+    Home (Homepage.php)
+    Sign up
+    Login (LoginPage.php) - Anthony
+    Forgot Password 
+    Seller page 
+    Buyer page 
+    Account page 
+
+    Book selection?
+    Buyer Bottons?
+
+
+Anthony notes 10/12/2025:
+
+    - Initial templates created (CSS files, header/footer.php files)
+    - LoginPage.php created (low fidelity)
+    - Need to look into and start Object Oriented Programming for websites. Backend Logical components (controllers, models) 
+    Examples:
+      UserController: Handles user-related operations (login, logout, registration, profile updates).
+      UserModel: Responsible for communicating with the database (CRUD for users).
+
+    - For the backend. Folder structure needs to be established, maybe we need sub-folders for classes or functions. (Need to research and decide)
+
+
+
+    

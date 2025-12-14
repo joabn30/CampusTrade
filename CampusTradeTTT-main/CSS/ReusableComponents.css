@@ -1,0 +1,210 @@
+/* Buy and sell buttons*/
+.button,
+.buy-sell-button,
+.search-bar button {
+  background-color: #FF8351;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.button:hover,
+.buy-sell-button:hover,
+.search-bar button:hover {
+  background-color: #e6733f;
+}
+.buy-sell-button:hover {
+  background-color: #E65C00; 
+}
+
+/* BOOK LISTING CARD (Seller/Buyer Pages)*/
+.book-card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  color: #000000;
+}
+
+/* Book Details, Confirmations*/
+.modal {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  max-width: 600px;
+  margin: auto;
+  color: #000000;
+}
+
+/*  SEARCH BAR (Top Navigation Section)*/
+.search-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+
+
+/* Profile icons*/
+.profile-icon {
+  width: 80px;
+  height: 80px;
+  background-color: #000000;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0.5rem;
+}
+
+
+/*About Page*/
+.about-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  background-color: #fff;
+  border: 8px solid #FFA500;
+  border-radius: 16px;
+  padding: 60px 50px;
+   width: 2100%;
+  max-width: 2100px;
+  margin: 60px auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.about-left {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-right {
+  flex: 2;
+  text-align: left;
+   font-size: 30px;
+}
+
+.about-logo {
+  width: 500px;
+  height: auto;
+  border-radius: 12px;
+}
+
+.about-right h1 {
+  color: #003748;
+  margin-bottom: 10px;
+  font-size: 80px;
+}
+
+.about-right h2 {
+  color: #FF6600;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.about-right p {
+  margin-bottom: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.bullet-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+  line-height: 1.7;
+}
+
+.bullet-list li {
+  margin-bottom: 6px;
+  color: #333;
+}
+
+/* Responsive layout (for smaller screens) */
+@media (max-width: 900px) {
+  .about-box {
+    flex-direction: column;
+    text-align: center;
+   
+  }
+  .about-right {
+    text-align: center;
+    
+  }
+}
+
+/* ContactPage*/
+.contact-box {
+  background-color: #fff;
+  border: 4px solid #FFA500;
+  border-radius: 16px;
+  padding: 40px 60px;
+  max-width: 700px;
+  margin: 80px auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.contact-box h1 {
+  color: #003748;
+  margin-bottom: 10px;
+}
+
+.contact-box .intro {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.contact-form button {
+  background-color: #FF6600;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.contact-form button:hover {
+  background-color: #e55500;
+}
+
+.note {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 10px;
+}
+
