@@ -32,12 +32,6 @@ include('header.php');
                 onclick="window.location.href='buyerpage.php'">
           Switch to Buyer
         </button>
-
-        <button class="button" type="button"
-                onclick="window.location.href='FeedPage.php'">
-          Campus Feed
-        </button>
-
         <form method="post" action="logout.php" style="display:inline;">
           <button class="button logout" type="submit">LogOut</button>
         </form>
@@ -61,18 +55,13 @@ include('header.php');
       <label for="avatarInput" class="avatar" aria-label="Upload profile picture">
         <img id="avatarPreview"
              src="<?= htmlspecialchars($vImgSrc) ?>"
-             alt="Profile picture">
+             alt="Profile picture"
+             onerror="this.src='Images/ProfileIcon.png'">
         <span class="avatar-icon">+</span>
       </label>
 
       <small>Click to upload</small>
     </div>
-
-    <script>
-      document.getElementById("avatarInput").addEventListener("change", () => {
-        document.getElementById("avatarForm").submit();
-      });
-    </script>
 
     <!-- flag ONLY for image upload -->
     <input type="hidden" name="edit_profile" value="1">
@@ -140,20 +129,19 @@ include('header.php');
 </form>
 
 
+      </div>
     </div>
   </div>
 </main>
 
-<?php include('footer.php'); ?>
-
 <!-- ========= IMAGE PREVIEW SCRIPT ========= -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Profile avatar preview
-  const avatarInput = document.getElementById('avatarInput');
+  const avatarInput   = document.getElementById('avatarInput');
   const avatarPreview = document.getElementById('avatarPreview');
+  const profileForm   = document.getElementById('avatarForm');
 
-  if (avatarInput && avatarPreview) {
+  if (avatarInput && avatarPreview && profileForm) {
     avatarInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -162,11 +150,14 @@ document.addEventListener('DOMContentLoaded', () => {
         avatarPreview.src = ev.target.result;
       };
       reader.readAsDataURL(file);
+
+      setTimeout(() => {
+        profileForm.submit();
+      }, 300);
     });
   }
 
-  // Book image preview
-  const bookInput = document.getElementById('bookUpload');
+  const bookInput   = document.getElementById('bookUpload');
   const bookPreview = document.getElementById('bookPreview');
 
   if (bookInput && bookPreview) {
@@ -179,71 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bookPreview.hidden = false;
       };
       reader.readAsDataURL(file);
-    });
-  }
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Profile avatar preview
-  const avatarInput = document.getElementById('avatarInput');
-  const avatarPreview = document.getElementById('avatarPreview');
-
-  if (avatarInput && avatarPreview) {
-    avatarInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        avatarPreview.src = ev.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  // Book image preview
-  const bookInput   = document.getElementById('bookUpload');
-  const bookPreview = document.getElementById('bookPreview');
-
-  if (bookInput && bookPreview) {
-    bookInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        bookPreview.src = ev.target.result;
-        bookPreview.hidden = false;   // just show it under the +
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
-    });
-
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Profile avatar preview + auto-save
-  const avatarInput   = document.getElementById('avatarInput');
-  const avatarPreview = document.getElementById('avatarPreview');
-  const profileForm   = document.getElementById('profileForm');
-
-  if (avatarInput && avatarPreview && profileForm) {
-    avatarInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      // Show preview immediately
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        avatarPreview.src = ev.target.result;
-      };
-      reader.readAsDataURL(file);
-
-      // Auto-submit form so image is saved to DB
-      setTimeout(() => {
-        profileForm.submit();
-      }, 300); // tiny delay so preview appears smoothly
     });
   }
 });

@@ -24,7 +24,7 @@ $bookId = (int)$bookId;
 // 2. Load book + seller info from DB
 //    booklistings  -> book data
 //    accounts      -> seller account info
-//    userprofile   -> preferred payment + avatar (optional)
+//    userprofile   -> avatar (optional)
 $sql = "
     SELECT 
         b.*,
@@ -143,7 +143,8 @@ include('header.php');
           <label class="avatar" aria-label="Seller profile picture">
             <img
               src="<?php echo htmlspecialchars($avatarSrc); ?>"
-              alt="Seller profile picture">
+              alt="Seller profile picture"
+              onerror="this.src='Images/ProfileIcon.png'">
           </label>
         </div>
 
@@ -170,9 +171,6 @@ include('header.php');
           <?php else: ?>
             Not provided
           <?php endif; ?>
-        </p>
-        <p><strong>Preferred Payment:</strong>
-          <?php echo htmlspecialchars($book['preferred_pay'] ?? 'Not specified'); ?>
         </p>
       </div>
 

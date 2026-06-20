@@ -8,11 +8,7 @@ $db = require __DIR__ . '/Database.php';
 require __DIR__ . '/UserModel.php';
 
 // ---- Upload root ----
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-    $UPLOAD_ROOT = "C:/xampp/htdocs/CampusTradeTTT/Uploads/";
-} else {
-    $UPLOAD_ROOT = __DIR__ . "/Uploads/";
-}
+$UPLOAD_ROOT = __DIR__ . DIRECTORY_SEPARATOR . 'Uploads' . DIRECTORY_SEPARATOR;
 
 $userModel = new UserModel($db);
 
@@ -46,8 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $webPrefix = "Uploads/Profiles/";
 
             if (!is_dir($uploadDir)) {
-                die('Upload folder NOT found for profile image: ' . $uploadDir);
-
+                mkdir($uploadDir, 0775, true);
             }
 
             $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
@@ -67,10 +62,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $imagePath = $webPrefix . $fileName;
-            $userModel->UpdateProfileImage($imagePath, $userId);
-
-            header("Location: Seller_Controller.php?profile=img_updated");
-            exit;
+            
+            try {
+                $userModel->UpdateProfileImage($imagePath, $userId);
+                header("Location: Seller_Controller.php?profile=img_updated");
+                exit;
+            } catch (RuntimeException $e) {
+                $_SESSION['error'] = $e->getMessage();
+                header("Location: Seller_Controller.php?profile=img_failed");
+                exit;
+            }
         }
 
         $_SESSION['error'] = "Upload error code: " . $error;
@@ -135,13 +136,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = $file['error'];
 
             if ($error === UPLOAD_ERR_OK && $file['size'] > 0) {
-
-                // 🔹 Absolute path to Books folder (must match your real path)
-                $uploadDir = 'C:/Xampp/htdocs/CampusTradeTTT-main/Uploads/Books/';
+                $uploadDir = $UPLOAD_ROOT . 'Books' . DIRECTORY_SEPARATOR;
 
                 if (!is_dir($uploadDir)) {
                     die('Upload folder NOT found for books: ' . $uploadDir);
-
                 }
 
                 // Path stored in DB / used in <img src="...">
@@ -198,12 +196,11 @@ if (isset($_POST['edit_profile'])) {
 
         if ($error === UPLOAD_ERR_OK && $file['size'] > 0) {
 
-            // 🔹 ABSOLUTE PATH on disk – must match your real folder
-            $uploadDir = 'C:/Xampp/htdocs/CampusTradeTTT/Uploads/Profiles/';
+            $uploadDir = $UPLOAD_ROOT . 'Profiles' . DIRECTORY_SEPARATOR;
             $webPrefix = 'Uploads/Profiles/';   // what we store in DB / use in <img src>
 
             if (!is_dir($uploadDir)) {
-                die('Upload folder NOT found for profiles: ' . $uploadDir);
+                mkdir($uploadDir, 0775, true);
             }
 
             // extension
@@ -227,22 +224,16 @@ if (isset($_POST['edit_profile'])) {
     }
 
     if ($newImagePath !== null) {
-        // if row exists -> update, otherwise insert
-        $sql = "
-            INSERT INTO userprofile (user_id, profile_image, preferred_pay)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE profile_image = VALUES(profile_image)
-        ";
-
-        $prefPay = $vPay ?: 'Cash';
-
-        $stmt = $db->prepare($sql);
-        $stmt->bind_param("iss", $sellerId, $newImagePath, $prefPay);
-        $stmt->execute();
-        $stmt->close();
-
-        // refresh current page variables
-        $vImgSrc = $newImagePath;
+        // Use the new safe UpdateProfileImage method
+        try {
+            $userModel->UpdateProfileImage($newImagePath, $sellerId);
+            // refresh current page variables
+            $vImgSrc = $newImagePath;
+        } catch (RuntimeException $e) {
+            $_SESSION['error'] = $e->getMessage();
+            header('Location: Seller_Controller.php?profile=img_failed');
+            exit;
+        }
     }
 
     header('Location: Seller_Controller.php?profile=updated');
@@ -368,7 +359,6 @@ if (isset($_GET['view']) && $_GET['view'] === "profile_update") {
     $vMajor     = $profile['major'] ?? '';
     $vCityState = $profile['city_state'] ?? '';
     $vEmail     = $profile['email'] ?? '';
-    $vPay       = $profile['preferred_pay'] ?? 'Cash';
     $vImgSrc    = $profile['profile_image'] ?: "Images/ProfileIcon.png";
 
     require "Profile_Update.php";

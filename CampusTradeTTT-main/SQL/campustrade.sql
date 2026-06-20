@@ -45,7 +45,7 @@ CREATE TABLE `accounts` (
 --
 
 CREATE TABLE `booklistings` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `seller_id` int(10) UNSIGNED NOT NULL,
   `title` varchar(200) NOT NULL,
   `isbn` varchar(32) DEFAULT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE `booklistings` (
 CREATE TABLE `userprofile` (
   `user_id` int(11) NOT NULL,
   `profile_image` varchar(255) DEFAULT NULL,
-  `preferred_pay` enum('Venmo','PayPal','CashApp','Zelle','Cash') NOT NULL,
+  `preferred_pay` enum('Venmo','PayPal','CashApp','Zelle','Cash') NOT NULL DEFAULT 'Cash',
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -84,48 +84,6 @@ CREATE TABLE `tickets` (
   `message` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
---
---  posts (feed posts)
---
-
-CREATE TABLE `posts` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
-  `type` enum('post','event') NOT NULL DEFAULT 'post',
-  `text` varchar(500) NOT NULL,
-  `image_data` longtext DEFAULT NULL,
-  `event_datetime` datetime DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
---
--- post_likes (likes per user per post)
---
-
-CREATE TABLE `post_likes` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `post_id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
---
--- post_comments
---
-
-CREATE TABLE `post_comments` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `post_id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
-  `comment_text` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
 
 --
 -- Indexes for dumped tables
@@ -158,32 +116,6 @@ ALTER TABLE `tickets`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `posts`
---
-ALTER TABLE `posts`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `posts_user_id` (`user_id`),
-  ADD KEY `posts_type` (`type`);
-
---
--- Indexes for table `post_likes`
---
-ALTER TABLE `post_likes`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `pl_post_id` (`post_id`),
-  ADD KEY `pl_user_id` (`user_id`),
-  ADD UNIQUE KEY `uniq_post_user` (`post_id`,`user_id`);
-
---
--- Indexes for table `post_comments`
---
-ALTER TABLE `post_comments`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `pc_post_id` (`post_id`),
-  ADD KEY `pc_user_id` (`user_id`);
-
-
-
 --
 -- AUTO_INCREMENT for dumped tables
 --
@@ -207,25 +139,6 @@ ALTER TABLE `tickets`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `posts`
---
-ALTER TABLE `posts`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `post_likes`
---
-ALTER TABLE `post_likes`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `post_comments`
---
-ALTER TABLE `post_comments`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
-
-
 --
 -- Constraints for dumped tables
 --
@@ -237,25 +150,6 @@ ALTER TABLE `booklistings`
   ADD CONSTRAINT `booklistings_ibfk_1` FOREIGN KEY (`seller_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `posts`
---
-ALTER TABLE `posts`
-  ADD CONSTRAINT `posts_ibfk_user` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `post_likes`
---
-ALTER TABLE `post_likes`
-  ADD CONSTRAINT `post_likes_ibfk_post` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `post_likes_ibfk_user` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `post_comments`
---
-ALTER TABLE `post_comments`
-  ADD CONSTRAINT `post_comments_ibfk_post` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `post_comments_ibfk_user` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE;
-
 COMMIT;
 
 -- reset password fields on accounts

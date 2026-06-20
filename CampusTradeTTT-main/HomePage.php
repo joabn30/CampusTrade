@@ -193,6 +193,3 @@ $browseHref = isset($_SESSION['user_id'])
 </div>      <!-- end .content-section -->
 
 <?php include('footer.php'); ?>
-
-
-<?php include('footer.php'); ?>

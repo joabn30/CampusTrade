@@ -188,6 +188,7 @@ public function PaymentMeth(int $id): array {
     // CHANGE user_id to match your FK column name
     $sql = "SELECT profile_image, preferred_pay FROM userprofile
             WHERE user_id = ?
+            ORDER BY updated_at DESC
             LIMIT 1";
     $stmt = $this->db->prepare($sql);
     if (!$stmt) throw new RuntimeException("Prep failed: {$this->db->error}");
@@ -195,7 +196,46 @@ public function PaymentMeth(int $id): array {
     $stmt->execute();
     $row = $stmt->get_result()->fetch_assoc() ?: [];
     $stmt->close();
+
+    if (!empty($row['profile_image'])) {
+        $row['profile_image'] = $this->NormalizeWebImagePath($row['profile_image']);
+    }
+
     return $row;
+}
+
+private function NormalizeWebImagePath(?string $path): ?string {
+    $path = trim((string)$path);
+    if ($path === '') {
+        return null;
+    }
+
+    $path = str_replace('\\', '/', $path);
+
+    if (preg_match('#^https?://#i', $path)) {
+        return $path;
+    }
+
+    foreach (['Uploads/Profiles/', 'Uploads/Books/', 'Images/'] as $webRoot) {
+        $pos = stripos($path, $webRoot);
+        if ($pos !== false) {
+            $path = substr($path, $pos);
+            break;
+        }
+    }
+
+    $path = ltrim($path, '/');
+
+    if (preg_match('#^[A-Za-z]:/#', $path)) {
+        return null;
+    }
+
+    $diskPath = __DIR__ . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path);
+    if (!is_file($diskPath)) {
+        return null;
+    }
+
+    return $path;
 }
 
 
@@ -311,68 +351,6 @@ public function UpdateBook(array $Book_info, int $sellerId) {
       }
       return $book;
     }
-/*
-    public function UpdateProfile(array $profile, int $sellerId){
-
-      $first   = trim($profile['first']   ?? '');
-      $last    = trim($profile['last']    ?? '');
-      $acad    = trim($profile['acad']    ?? 'Student');
-      $school  = trim($profile['school']  ?? '');
-      $major   = trim($profile['major']   ?? '');
-      $citySt  = trim($profile['citySt']  ?? '');
-      $payment = trim($profile['payment'] ?? 'Cash');
-
-      $sql_updateacc = "UPDATE accounts SET first_name = ?, last_name = ?, acad_role = ?, school_name = ?, major = ?, city_state = ?
-                        WHERE id = ?
-                        LIMIT 1";
-      $stmt = $this ->db->prepare($sql_updateacc);
-      if(!$stmt){
-        throw new RuntimeException("Database error: " . $this->db->error);
-      }
-
-      $updating = $stmt->bind_param("ssssssi", $first, $last, $acad, $school, $major, $citySt, $sellerId);
-
-      if(!$updating){
-        throw new RuntimeException("Database error with updating Profile: " . $this ->db->error);
-      }
-      if(!$stmt ->execute()){
-        throw new RuntimeException("Database error execute UpdateProfile accounts): " . $stmt->db->error);
-      }
-
-      $accChanged = $stmt->affected_rows > 0;
-
-      $stmt ->close();
-
-      $payment_changed = UpdatePayment($sellerId, $payment);
-
-      return ($accChanged || $payment_changed);
-
-    }
-    public function UpdatePayment(int $sellerId, string $payment){
-
-      $sql_update_prof = "INSERT INTO userprofile (user_id, preferred_pay)
-                          VALUES (?, ?)
-                          ON DUPLICATE KEY UPDATE preferred_pay = VALUES(preferred_pay)
-        ";
-
-        $stmtProf = $this->db->prepare($sql_update_prof);
-        if (!$stmtProf) {
-            throw new RuntimeException("Database error (prepare UpdateProfile userprofile): " . $this->db->error);
-        }
-
-        if (!$stmtProf->bind_param("is", $sellerId, $payment)) {
-            throw new RuntimeException("Database error (bind_param UpdateProfile userprofile): " . $stmtProf->error);
-        }
-
-        if (!$stmtProf->execute()) {
-            throw new RuntimeException("Database error (execute UpdateProfile userprofile): " . $stmtProf->error);
-        }
-
-        $profChanged = $stmtProf->affected_rows > 0;
-        $stmtProf->close();
-        return $profChanged;
-
-    }*/
  public function UpdateProfile(array $profile, int $userId): bool {
 
     $first   = trim($profile['first']   ?? '');
@@ -418,11 +396,10 @@ public function UpdateProfileAndPayment(array $profile, int $sellerId): bool {
 }
 
 public function UpdateProfileImage(string $imagePath, int $sellerId): bool {
-    // If the row may not exist yet, do an UPSERT (insert or update)
     $sql_Profile_img = "
-        INSERT INTO userprofile (user_id, profile_image)
-        VALUES (?, ?)
-        ON DUPLICATE KEY UPDATE profile_image = VALUES(profile_image)
+        UPDATE userprofile
+        SET profile_image = ?
+        WHERE user_id = ?
     ";
 
     $stmt_img = $this->db->prepare($sql_Profile_img);
@@ -430,7 +407,7 @@ public function UpdateProfileImage(string $imagePath, int $sellerId): bool {
         throw new RuntimeException("Database error (prepare UpdateProfileImage): " . $this->db->error);
     }
 
-    if (!$stmt_img->bind_param("is", $sellerId, $imagePath)) {
+    if (!$stmt_img->bind_param("si", $imagePath, $sellerId)) {
         throw new RuntimeException("Database error (bind_param UpdateProfileImage): " . $stmt_img->error);
     }
 
@@ -441,7 +418,46 @@ public function UpdateProfileImage(string $imagePath, int $sellerId): bool {
     $img_change = $stmt_img->affected_rows > 0;
     $stmt_img->close();
 
-    return $img_change;
+    if ($img_change || $this->UserProfileExists($sellerId)) {
+        return true;
+    }
+
+    $sql_Profile_img = "
+        INSERT INTO userprofile (user_id, profile_image, preferred_pay)
+        VALUES (?, ?, 'Cash')
+    ";
+
+    $stmt_img = $this->db->prepare($sql_Profile_img);
+    if (!$stmt_img) {
+        throw new RuntimeException("Database error (prepare InsertProfileImage): " . $this->db->error);
+    }
+
+    if (!$stmt_img->bind_param("is", $sellerId, $imagePath)) {
+        throw new RuntimeException("Database error (bind_param InsertProfileImage): " . $stmt_img->error);
+    }
+
+    if (!$stmt_img->execute()) {
+        throw new RuntimeException("Database error (execute InsertProfileImage): " . $stmt_img->error);
+    }
+
+    $stmt_img->close();
+
+    return true;
+}
+
+private function UserProfileExists(int $userId): bool {
+    $sql = "SELECT 1 FROM userprofile WHERE user_id = ? LIMIT 1";
+    $stmt = $this->db->prepare($sql);
+    if (!$stmt) {
+        throw new RuntimeException("Database error (prepare UserProfileExists): " . $this->db->error);
+    }
+
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $exists = (bool) $stmt->get_result()->fetch_row();
+    $stmt->close();
+
+    return $exists;
 }
 
 

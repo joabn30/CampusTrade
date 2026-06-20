@@ -131,7 +131,7 @@ $vPay        = $vPay        ?? '';
     <label for="">City:</label>
     <input type="text" name="city_state"  value="<?= htmlspecialchars($vCityState) ?>">
 
-   <label for="">Prefferred Payment:</label>
+    <label for="">Preferred Payment:</label>
     <select name="preferred_pay">
       <option value="Cash"      <?= ($vPay === 'Cash')      ? 'selected' : '' ?>>Cash</option>
       <option value="Venmo"     <?= ($vPay === 'Venmo')     ? 'selected' : '' ?>>Venmo</option>

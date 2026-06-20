@@ -128,9 +128,7 @@ sort($depts);
     <!-- top actions inside the cream box -->
     <div class="top-actions">
       <a href="SellerPage.php" class="btn switch">Switch to Seller</a>
-      
-      <a href="FeedPage.php" class="btn feed">Campus Feed</a>
-      
+
       <a href="logout.php" class="btn logout">LogOut</a>
     </div>
 
@@ -141,7 +139,7 @@ sort($depts);
         <div class="profile-inner">
           <div class="avatar-uploader">
             <label class="avatar">
-              <img src="<?= htmlspecialchars($vImgSrc) ?>" alt="Profile picture">
+              <img src="<?= htmlspecialchars($vImgSrc) ?>" alt="Profile picture" onerror="this.src='Images/ProfileIcon.png'">
               <span class="avatar-text">Click to upload</span>
             </label>
           </div>

@@ -26,6 +26,7 @@ $vPay        = $vPay        ?? '';
     <link rel="stylesheet" href="css/BuyerPage.css">
     <link rel="stylesheet" href="CSS/ReusableComponents.css"> <!-- Buttons, cards, modals -->
     <link rel="stylesheet" href="CSS/ProfileUpdate.css">
+    <link rel="stylesheet" href="CSS/ModernUI.css">
 
 </head>
 <body>
