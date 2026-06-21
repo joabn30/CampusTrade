@@ -68,20 +68,9 @@ if ($book) {
 include('header.php');
 ?>
 
-<main>
-  <section class="content-section">
+<main class="buy-page-main">
+  <section class="buy-page-section">
     <div class="buy-box">
-
-      <!-- top-right buttons INSIDE the card -->
-      <div class="top-actions-inside">
-        <!-- Better to go to Seller_Controller.php -->
-        <a href="Seller_Controller.php" class="button switch">Switch to Seller</a>
-
-        <!-- Inline form for logout -->
-        <form method="post" action="logout.php" style="display:inline;">
-          <button class="button logout" type="submit">LogOut</button>
-        </form>
-      </div>
 
       <?php if (!$book): ?>
 
@@ -95,94 +84,90 @@ include('header.php');
         </div>
 
       <?php else: ?>
+      <div class="parent-buy">
+        <!-- LEFT: Seller info -->
+        <div class="buy-left">
+          <h1>Seller Information</h1>
 
-      <!-- LEFT: Book details -->
-      <div class="buy-left">
-        <h1>Book Details</h1>
-
-        <div class="book-upload">
-          <?php if (!empty($coverSrc)): ?>
-            <div class="book-cover-view">
+          <div class="avatar-uploader">
+            <label class="avatar" aria-label="Seller profile picture">
               <img
-                src="<?php echo htmlspecialchars($coverSrc); ?>"
-                alt="Book cover for <?php echo htmlspecialchars($book['title']); ?>">
-            </div>
-          <?php else: ?>
-            <label class="book-circle" aria-label="Book image">
-              <span class="book-plus">+</span>
-              <span class="book-hint">No Image</span>
+                src="<?php echo htmlspecialchars($avatarSrc); ?>"
+                alt="Seller profile picture"
+                onerror="this.src='Images/ProfileIcon.png'">
             </label>
-          <?php endif; ?>
+          </div>
+
+          <p><strong>Name:</strong>
+            <?php echo htmlspecialchars($sellerName); ?>
+          </p>
+          <p><strong>Status:</strong>
+            <?php echo htmlspecialchars($book['acad_role']); ?>
+          </p>
+          <p><strong>School:</strong>
+            <?php echo htmlspecialchars($book['school_name']); ?>
+          </p>
+          <p><strong>Major:</strong>
+            <?php echo htmlspecialchars($book['major']); ?>
+          </p>
+          <p><strong>Location:</strong>
+            <?php echo htmlspecialchars($book['city_state']); ?>
+          </p>
+          <p><strong>Email:</strong>
+            <?php if (!empty($book['email'])): ?>
+              <a href="mailto:<?php echo htmlspecialchars($book['email']); ?>?subject=Interested%20in%20your%20book:%20<?php echo rawurlencode($book['title']); ?>">
+                <?php echo htmlspecialchars($book['email']); ?>
+              </a>
+            <?php else: ?>
+              Not provided
+            <?php endif; ?>
+          </p>
         </div>
 
-        <p><strong>Title:</strong>
-          <?php echo htmlspecialchars($book['title']); ?>
-        </p>
-        <p><strong>Price:</strong>
-          $<?php echo htmlspecialchars($book['price']); ?>
-        </p>
-        <p><strong>Course:</strong>
-          <?php echo htmlspecialchars($book['course_id'] ?? ''); ?>
-        </p>
-        <p><strong>Condition:</strong>
-          <?php echo htmlspecialchars($book['book_state']); ?>
-        </p>
-        <p><strong>ISBN:</strong>
-          <?php echo htmlspecialchars($book['isbn'] ?? ''); ?>
-        </p>
-        <p><strong>Status:</strong>
-          <?php echo htmlspecialchars($book['status']); ?>
-        </p>
-      </div>
+        <!-- RIGHT: Book details -->
+        <div class="buy-right">
+          <h1>Book Details</h1>
 
-      <!-- MIDDLE: Seller info -->
-      <div class="buy-right">
-        <h2>Seller Information</h2>
+          <div class="book-upload">
+            <?php if (!empty($coverSrc)): ?>
+              <div class="book-cover-view">
+                <img
+                  src="<?php echo htmlspecialchars($coverSrc); ?>"
+                  alt="Book cover for <?php echo htmlspecialchars($book['title']); ?>">
+              </div>
+            <?php else: ?>
+              <label class="book-circle" aria-label="Book image">
+                <span class="book-plus">+</span>
+                <span class="book-hint">No Image</span>
+              </label>
+            <?php endif; ?>
+          </div>
 
-        <div class="avatar-uploader">
-          <label class="avatar" aria-label="Seller profile picture">
-            <img
-              src="<?php echo htmlspecialchars($avatarSrc); ?>"
-              alt="Seller profile picture"
-              onerror="this.src='Images/ProfileIcon.png'">
-          </label>
+          <p><strong>Title:</strong>
+            <?php echo htmlspecialchars($book['title']); ?>
+          </p>
+          <p><strong>Price:</strong>
+            $<?php echo htmlspecialchars($book['price']); ?>
+          </p>
+          <p><strong>Course:</strong>
+            <?php echo htmlspecialchars($book['course_id'] ?? ''); ?>
+          </p>
+          <p><strong>Condition:</strong>
+            <?php echo htmlspecialchars($book['book_state']); ?>
+          </p>
+          <p><strong>ISBN:</strong>
+            <?php echo htmlspecialchars($book['isbn'] ?? ''); ?>
+          </p>
+          <p><strong>Status:</strong>
+            <?php echo htmlspecialchars($book['status']); ?>
+          </p>
         </div>
-
-        <p><strong>Name:</strong>
-          <?php echo htmlspecialchars($sellerName); ?>
-        </p>
-        <p><strong>Status:</strong>
-          <?php echo htmlspecialchars($book['acad_role']); ?>
-        </p>
-        <p><strong>School:</strong>
-          <?php echo htmlspecialchars($book['school_name']); ?>
-        </p>
-        <p><strong>Major:</strong>
-          <?php echo htmlspecialchars($book['major']); ?>
-        </p>
-        <p><strong>Location:</strong>
-          <?php echo htmlspecialchars($book['city_state']); ?>
-        </p>
-        <p><strong>Email:</strong>
-          <?php if (!empty($book['email'])): ?>
-            <a href="mailto:<?php echo htmlspecialchars($book['email']); ?>?subject=Interested%20in%20your%20book:%20<?php echo rawurlencode($book['title']); ?>">
-              <?php echo htmlspecialchars($book['email']); ?>
-            </a>
-          <?php else: ?>
-            Not provided
-          <?php endif; ?>
-        </p>
-      </div>
-
-      <!-- RIGHT: Poster image -->
-      <div class="buy-graphic">
-        <img src="Images/TTTBuyButton.png" alt="Thank You Poster" class="thankyou-image">
       </div>
 
       <!-- NOTE + MESSAGE BUTTON: full-width row under all columns -->
       <div class="buy-note">
         <div class="note">
-          💬 Please contact the seller directly to discuss how payment will be made and how you’ll receive the book.
+          Please contact the seller directly to discuss how payment will be made and how you will receive the book.
         </div>
 
         <?php if (!empty($book['email'])): ?>

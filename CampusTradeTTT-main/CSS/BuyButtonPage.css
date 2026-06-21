@@ -1,224 +1,290 @@
 /* ===== Brand Variables ===== */
-:root{
-  --navH: 130px;            /* adjust if your header height changes */
+:root {
+  --navH: 130px;
   --teal-bg: #073642;
-  --orange: #FF6600;
+  --orange: #ff6600;
   --orange-press: #e65c00;
-  --ink: rgba(255,255,255,0.36);
+  --cream: #fbeedb;
+  --cream-light: #fff8e9;
+  --ink: #073642;
 }
 
-/* ===== Page section ===== */
-.content-section{
-  display:flex;
-  justify-content:center;              /* center the card */
-  align-items:flex-start;
-  background:var(--teal-bg);
-  padding: calc(var(--navH) + 20px) 0 120px;   /* space from header + bottom */
-  min-height: 100vh;                    /* keep page tall */
-  box-sizing:border-box;
-  width: 100%;
+/* ===== Page Section ===== */
+.buy-page-main {
+  display: block;
+  min-height: 100vh;
+  background: var(--teal-bg);
 }
 
-/* ==== FORCE THE CARD TO SPAN THE BROWN STRIP ==== */
-.content-section {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-/* ===== Main card ===== */
-.buy-box {
-  position: relative; /* anchors top-right buttons */
-  background: #FBEEDB;
-  border: 12px solid var(--orange);
-  border-radius: 14px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
-
-  /* grid layout: Book | Seller | Poster on top, note row below spanning all */
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 420px; /* Book | Seller | Image */
-  grid-template-areas:
-    "left info poster"
-    "note note note";
-  gap: 20px;
-
-  padding: 32px;
-  max-width: 1100px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-/* Map areas */
-.buy-left  { grid-area: left;  margin-top: 20px; }
-.buy-right { grid-area: info;  margin-top: 20px; }
-.buy-graphic{ grid-area: poster; display:flex; justify-content:flex-end; align-self:start; padding-top: 20px; }
-
-/* New full-width note area (spans all columns) */
-.buy-note {
-  grid-area: note;
+.buy-page-section {
   display: flex;
-  flex-direction: column;      /* stack note and button */
-  align-items: center;         /* center them under the images */
   justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--teal-bg);
+  padding: calc(var(--navH) + 20px) 24px 120px;
+}
+
+/* ===== Main Card ===== */
+.buy-page-section .buy-box {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 36px;
+  box-sizing: border-box;
+  background: var(--cream);
+  border: 10px solid var(--orange);
+  border-radius: 14px;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.22);
+}
+
+.buy-page-section .parent-buy {
+  display: flex !important;
+  align-items: stretch;
+  justify-content: center;
+  gap: 72px;
+  width: 100%;
+}
+
+.buy-page-section .buy-left,
+.buy-page-section .buy-right {
+  min-width: 0;
+  padding: 26px;
+  box-sizing: border-box;
+  background: rgba(255, 248, 233, 0.82);
+  border: 1px solid rgba(7, 54, 66, 0.14);
+  border-radius: 10px;
+  color: var(--ink);
+}
+
+.buy-page-section .buy-left {
+  flex: 0 0 330px;
+}
+
+.buy-page-section .buy-right {
+  flex: 1 1 0;
+}
+
+/* ===== Text ===== */
+.buy-page-section .buy-left h1,
+.buy-page-section .buy-right h1 {
+  margin: 0 0 18px;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 800;
+}
+
+.buy-page-section .buy-left h1 {
+  color: #e66b00;
+}
+
+.buy-page-section .buy-left p,
+.buy-page-section .buy-right p {
+  margin: 10px 0;
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.buy-page-section .buy-left strong,
+.buy-page-section .buy-right strong {
+  color: #052d36;
+}
+
+.buy-page-section .buy-left a,
+.buy-page-section .buy-right a {
+  color: #e66b00;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.buy-page-section .buy-left a:hover,
+.buy-page-section .buy-right a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Images ===== */
+.buy-page-section .avatar-uploader {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 22px;
+}
+
+.buy-page-section .buy-left .avatar {
+  display: block;
+  width: 96px;
+  height: 96px;
+  overflow: hidden;
+  border: 4px solid var(--cream-light);
+  border-radius: 50%;
+  box-shadow: 0 8px 18px rgba(7, 54, 66, 0.18);
+}
+
+.buy-page-section .buy-left .avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.buy-page-section .book-upload {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 4px 0 26px;
+}
+
+.buy-page-section .book-cover-view img {
+  display: block;
+  width: 190px;
+  max-width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 12px 24px rgba(7, 54, 66, 0.22);
+}
+
+.buy-page-section .book-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 170px;
+  aspect-ratio: 3 / 4;
+  color: #e66b00;
+  font-weight: 800;
+  background: var(--cream-light);
+  border: 2px dashed rgba(230, 107, 0, 0.55);
+  border-radius: 10px;
+}
+
+.buy-page-section .book-plus {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.buy-page-section .book-hint {
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
+
+/* ===== Note + Button ===== */
+.buy-page-section .buy-note {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 14px;
-  margin-top: 8px;
-  padding-top: 6px;
-  padding-bottom: 6px;
+  margin-top: 28px;
 }
 
-/* Titles & text */
-.hero-title{
-  margin:0 0 14px;
-  color:#073642;
-  font-weight:800;
-  font-size:28px;
-}
-.buy-right h2{
-  margin:0 0 12px;
-  font-size:26px;
-  font-weight:800;
-  color:#e66b00;
-}
-
-/* Seller note (style kept but we will move markup into .buy-note) */
-.note{
-  background:#FFF8E9;
-  border-left:6px solid #FF9900;
-  padding:14px 14px;
-  border-radius:8px;
-  font-size:1rem;
-  max-width:960px;
-  box-sizing:border-box;
+.buy-page-section .note {
+  width: 100%;
+  max-width: 760px;
+  box-sizing: border-box;
+  padding: 14px;
+  color: var(--ink);
   text-align: center;
+  background: var(--cream-light);
+  border-left: 6px solid #ff9900;
+  border-radius: 8px;
 }
 
-/* Poster image */
-.thankyou-image{
-  width:100%;
-  max-width:320px;   /* control poster width */
-  height:auto;
-  border-radius:10px;
-  object-fit:contain;
-  background:var(--teal-bg); /* blends if PNG has transparent edges */
-  box-shadow:0 6px 16px rgba(0,0,0,.22);
-  margin-top: 40px;
-}
-
-/* Top-right buttons inside the card */
-.top-actions-inside{
-  position:absolute;
-  top:14px;
-  right:16px;
-  display:flex;
-  gap:15px;
-  margin-right: 40px;
-  z-index:6;
-}
-.top-actions-inside .button{
-  border:none;
-  border-radius:6px;
-  padding:8px 14px;
-  font-weight:900;
-  cursor:pointer;
-  color:#fff;
-  font-size:1rem;
-  text-decoration:none;
-}
-.top-actions-inside .switch{ background:var(--orange); }
-.top-actions-inside .switch:hover{ background:var(--orange-press); }
-.top-actions-inside .logout{ background:#113a44; }
-.top-actions-inside .logout:hover{ background:#0c3038; }
-
-/* Links */
-.buy-right a{ color:#e66b00; text-decoration:none; }
-.buy-right a:hover{ text-decoration:underline; }
-
-/* Message Button */
-.message-button {
+.buy-page-section .message-button {
   display: inline-block;
-  padding: 12px 28px;
-  color: white;
-  text-decoration: none;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  min-width: 190px; /* ensures button is long enough */
-  text-align: center;
+  min-width: 190px;
   margin-top: 8px;
-  background-color: #e66b00;
-  border: 2px dashed #e66b00;
+  padding: 12px 28px;
+  color: #fff !important;
   font-size: 20px;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  background: #e66b00;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 0 8px 16px rgba(230, 107, 0, 0.24);
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* a-message override (if you use anchor) */
-a.message-button {
-  color: white !important;
-  text-decoration: none;
-  display:inline-block;
+.buy-page-section .message-button:hover {
+  background: var(--orange-press);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(230, 107, 0, 0.28);
 }
 
 /* ===== Responsive ===== */
-@media (max-width: 1100px){
-  .buy-box{
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      "left info"
-      "poster poster"
-      "note note";
+@media (max-width: 900px) {
+  .buy-page-section {
+    padding-left: 12px;
+    padding-right: 12px;
   }
-  .buy-graphic{ justify-content:flex-start; }
-  .thankyou-image{ max-width: 300px; }
-}
-@media (max-width: 720px){
-  .buy-box{
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "left"
-      "info"
-      "poster"
-      "note";
-    gap:20px;
-    padding:36px 20px 28px;
+
+  .buy-page-section .buy-box {
+    max-width: 900px;
+    padding: 24px;
+    border-width: 8px;
   }
-  .top-actions-inside{ top:10px; right:10px; }
-  .thankyou-image{ max-width: 260px; margin: 6px 0; }
-  .message-button{ font-size: 18px; min-width: 160px; }
+
+  .buy-page-section .parent-buy {
+    gap: 32px;
+  }
+
+  .buy-page-section .buy-left {
+    flex-basis: 250px;
+  }
+
+  .buy-page-section .buy-left,
+  .buy-page-section .buy-right {
+    padding: 20px;
+  }
+
+  .buy-page-section .book-cover-view img {
+    width: 150px;
+  }
+
+  .buy-page-section .book-circle {
+    width: 150px;
+  }
 }
 
-/* === Align the book image circle perfectly between title and details === */
-.book-upload {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  position: relative;
-  left: -45px;  /* move the circle slightly left; adjust value as needed */
-  margin-bottom: 70px; /* space before book details text */
+@media (max-width: 620px) {
+  .buy-page-section .buy-box {
+    max-width: 620px;
+  }
+
+  .buy-page-section .parent-buy {
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .buy-page-section .buy-left,
+  .buy-page-section .buy-right {
+    flex: 1 1 auto;
+    padding: 24px;
+  }
 }
 
-.book-cover-view img {
-  width: 160px;
-  max-width: 100%;
-  height: auto;
-  border-radius: 10px;
-  object-fit: cover;
-  display: block;
-  margin-bottom: 10px;
+@media (max-width: 720px) {
+  .buy-page-section {
+    padding: calc(var(--navH) + 14px) 12px 80px;
+  }
+
+  .buy-page-section .buy-box {
+    padding: 22px 16px;
+    border-width: 8px;
+  }
+
+  .buy-page-section .buy-left h1,
+  .buy-page-section .buy-right h1 {
+    font-size: 24px;
+  }
+
+  .buy-page-section .message-button {
+    min-width: 160px;
+    font-size: 18px;
+  }
 }
-
-.buy-right .avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-}
-
-.buy-right .avatar img {
-  width: 110%;
-  height: 110%;
-  object-fit: cover;
-  display: block;
-}
-
-
