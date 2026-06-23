@@ -16,69 +16,83 @@ $userModel = new UserModel($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-$email = $_POST['email'] ?? '';
-$password =$_POST['password'] ?? '';
-$first_name = $_POST['firstName'] ?? '';
-$last_name = $_POST['lastName'] ?? '';
-$school_name =$_POST['school'] ?? '';
-$major = $_POST['major'] ?? '';
-$acad_role = $_POST['role'] ?? 'Student';
-$city = $_POST['location'] ?? '';
+    $email = trim($_POST['email'] ?? '');
+    $password = (string)($_POST['password'] ?? '');
+    $first_name = trim($_POST['firstName'] ?? '');
+    $last_name = trim($_POST['lastName'] ?? '');
+    $school_name = trim($_POST['school'] ?? '');
+    $major = trim($_POST['major'] ?? '');
+    $acad_role = trim($_POST['role'] ?? 'Student');
+    $city = trim($_POST['location'] ?? '');
 
 
-$confirm_pass = $_POST['confirmPassword'];
+    $confirm_pass = (string)($_POST['confirmPassword'] ?? '');
 
 //Verify that the password field  matches the confirm password field.
-if($password !== $confirm_pass){
-    $msg = 'Password field and Confirm Password field must match';
-    $_SESSION['flash_errors'] = [$msg];
-    $_SESSION['old'] = $_POST;
-    header('Location: SignUpPage.php');
-    exit;
-}
+    if($password !== $confirm_pass){
+        $msg = 'Password field and Confirm Password field must match';
+        $_SESSION['flash_errors'] = [$msg];
+        $_SESSION['old'] = $_POST;
+        header('Location: SignUpPage.php');
+        exit;
+    }
 
 //Verify that the password field and confirm password fields aren't empty
-if(empty($password) || empty($confirm_pass)){
-    $msg = 'Password fields cannot be empty';
-    $_SESSION['flash_errors'] = [$msg];
-    $_SESSION['old'] = $_POST;
-    header('Location: SignUpPage.php');
-    exit;
-}
+    if(empty($password) || empty($confirm_pass)){
+        $msg = 'Password fields cannot be empty';
+        $_SESSION['flash_errors'] = [$msg];
+        $_SESSION['old'] = $_POST;
+        header('Location: SignUpPage.php');
+        exit;
+    }
+
+    if (
+        $first_name === '' ||
+        $last_name === '' ||
+        $school_name === '' ||
+        $major === '' ||
+        $city === '' ||
+        $email === ''
+    ) {
+        $_SESSION['flash_errors'] = ['Please fill out every required field.'];
+        $_SESSION['old'] = $_POST;
+        header('Location: SignUpPage.php');
+        exit;
+    }
 
 //Store Signup page data into an associative array
-$User_data = [
-  'email'       => $email,
-  'password'    => $password,
-  'first_name'  => $first_name,
-  'last_name'   => $last_name,
-  'school_name' => $school_name,
-  'major'       => $major,
-  'acad_role'   => $acad_role,
-  'city' => $city,
-];
+    $User_data = [
+      'email'       => $email,
+      'password'    => $password,
+      'first_name'  => $first_name,
+      'last_name'   => $last_name,
+      'school_name' => $school_name,
+      'major'       => $major,
+      'acad_role'   => $acad_role,
+      'city' => $city,
+    ];
 
-try{
-  $id = $userModel->CreateAccount($User_data);
+    try{
+      $id = $userModel->CreateAccount($User_data);
 
-header('Location: LoginPage.php');
-exit;
-
-//Catches the bad email exception
-}catch(InvalidArgumentException $e){
-    $_SESSION['flash_errors'] = [$e ->getMessage()];
-    $_SESSION['old'] = $_POST;
-    header('Location: SignUpPage.php');
+    header('Location: LoginPage.php');
     exit;
-}catch(mysqli_sql_exception $e){
-     // Covers unexpected DB issues (like duplicate email race or DB offline)
-    $msg = ((int)$e->getCode() === 1062)
-        ? 'Email already exists. Please log in or use another email.'
-        : 'Something went wrong. Please try again later.';
-    $_SESSION['flash_errors'] = [$msg];
-    $_SESSION['old'] = $_POST;
-    header('Location: SignUpPage.php');
-    exit;
-}
+
+    //Catches the bad email exception
+    }catch(InvalidArgumentException $e){
+        $_SESSION['flash_errors'] = [$e ->getMessage()];
+        $_SESSION['old'] = $_POST;
+        header('Location: SignUpPage.php');
+        exit;
+    }catch(mysqli_sql_exception $e){
+         // Covers unexpected DB issues (like duplicate email race or DB offline)
+        $msg = ((int)$e->getCode() === 1062)
+            ? 'Email already exists. Please log in or use another email.'
+            : 'Something went wrong. Please try again later.';
+        $_SESSION['flash_errors'] = [$msg];
+        $_SESSION['old'] = $_POST;
+        header('Location: SignUpPage.php');
+        exit;
+    }
 }
 ?>
