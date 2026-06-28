@@ -1,0 +1,34 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USER: campustrade_user
+      DB_PASSWORD: campustrade_pass
+      DB_NAME: campustrade
+    volumes:
+      - ./Uploads:/var/www/html/Uploads
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: campustrade
+      MYSQL_USER: campustrade_user
+      MYSQL_PASSWORD: campustrade_pass
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./SQL/campustrade.sql:/docker-entrypoint-initdb.d/campustrade.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  db_data:
