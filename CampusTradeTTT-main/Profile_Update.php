@@ -23,7 +23,7 @@ $vPay        = $vPay        ?? '';
     <link rel="stylesheet" href="CSS/HeaderNavBar.css">       <!-- Header, nav, layout -->
     <link rel="stylesheet" href="CSS/LoginForm.css">
     <link rel="stylesheet" href="CSS/BuyButtonPage.css">
-    <link rel="stylesheet" href="css/BuyerPage.css">
+    <link rel="stylesheet" href="CSS/BuyerPage.css">
     <link rel="stylesheet" href="CSS/ReusableComponents.css"> <!-- Buttons, cards, modals -->
     <link rel="stylesheet" href="CSS/ProfileUpdate.css">
     <link rel="stylesheet" href="CSS/ModernUI.css">
