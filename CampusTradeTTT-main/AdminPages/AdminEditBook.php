@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (empty($_SESSION['acad_role']) || $_SESSION['acad_role'] !== 'Admin') {
-    header("Location: ../HomePage.php");
+    header("Location: /CampusTradeTTT/HomePage.php");
     exit;
 }
 

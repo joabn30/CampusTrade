@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (empty($_SESSION['acad_role']) || $_SESSION['acad_role'] !== 'Admin') {
-    header("Location: ../HomePage.php");
+    header("Location: /CampusTradeTTT/HomePage.php");
     exit;
 }
 
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <header>
 
     <div class="NavHead">
-        <img src="../Images/CampusTradeLogo.png" alt="Logo">
+        <img src="/CampusTradeTTT/Images/CampusTradeLogo.png" alt="Logo">
         <h1>Admin Dashboard</h1>
         <nav>
             <a href="../HomePage.php">Home</a>
