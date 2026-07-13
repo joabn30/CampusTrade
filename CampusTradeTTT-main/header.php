@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="css/BuyerPage.css">
   <link rel="stylesheet" href="CSS/ModernUI.css">
   <link rel="stylesheet" href="CSS/BuyButtonPage.css?v=20260621">
+  <link rel="stylesheet" href="CSS/SignUpPage.css">
 
 </head>
 <body>

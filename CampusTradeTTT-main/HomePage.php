@@ -66,7 +66,7 @@ $browseHref = isset($_SESSION['user_id'])
 
   <?php if (!empty($searchResult)): ?>
   <div class="Display-container">
-    <a href="buyButtonpage.php?id=<?= urlencode($searchResult['id']) ?>" class="book-link">
+    <a href="BuyButtonPage.php?id=<?= urlencode($searchResult['id']) ?>" class="book-link">
       <div class="book-card flash-msg success" id="flash-success">
         <div class="book-img">
           <img
@@ -111,7 +111,7 @@ $browseHref = isset($_SESSION['user_id'])
 </script>
 
 <div class="action-buttons">
-      <button class="buy-sell-btn" onclick="window.location.href='buyerpage.php'">Buy</button>
+      <button class="buy-sell-btn" onclick="window.location.href='<?= htmlspecialchars($browseHref, ENT_QUOTES, 'UTF-8') ?>'">Buy</button>
       <button class="buy-sell-btn" onclick="window.location.href='SellerPage.php'">Sell</button>
 </div>
   </div>

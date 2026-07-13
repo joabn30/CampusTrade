@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $uploadDir = $UPLOAD_ROOT . 'Books' . DIRECTORY_SEPARATOR;
 
                 if (!is_dir($uploadDir)) {
-                    die('Upload folder NOT found for books: ' . $uploadDir);
+                    mkdir($uploadDir, 0775, true);
                 }
 
                 // Path stored in DB / used in <img src="...">
@@ -313,7 +313,7 @@ if (isset($_POST['edit_profile'])) {
 
                 $uploadDir = $UPLOAD_ROOT . "Books/";
                 if (!is_dir($uploadDir)) {
-                    die('Upload folder NOT found for books (update): ' . $uploadDir);
+                    mkdir($uploadDir, 0775, true);
                 }
 
                 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));

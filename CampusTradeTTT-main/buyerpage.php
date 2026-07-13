@@ -1,11 +1,12 @@
 <?php
 session_start();
-include('header.php');
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: LoginPage.php');
     exit;
 }
+
+include('header.php');
 
 $db = require __DIR__ . '/Database.php';
 

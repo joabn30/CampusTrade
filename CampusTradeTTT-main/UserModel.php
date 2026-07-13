@@ -19,16 +19,28 @@ class UserModel {
     $major  = trim($data['major'] ?? '');
     $city = trim($data['city'] ?? '');
 
-    // Match ENUM casing exactly
-    $acad   = (($data['acad_role'] ?? '') === 'Alumni') ? 'Alumni' : 'Student';
+    // Match ENUM casing exactly.
+    $role = strtolower(trim((string)($data['acad_role'] ?? '')));
+    $acad = ($role === 'alumni') ? 'Alumni' : 'Student';
+
+    if (
+      $first === '' ||
+      $last === '' ||
+      $school === '' ||
+      $major === '' ||
+      $city === ''
+    ) {
+      throw new InvalidArgumentException('Please fill out every required field.');
+    }
+
     //Verify whether the email is valid, and a minnstate.edu email.
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
       throw new InvalidArgumentException('Bad email');
     }
 
-    $domain= "go.minnstate.edu";
-    if(!(str_ends_with($email, $domain))){
-        throw new InvalidArgumentException('Must be a minnstate.edu email');
+    $domain = "@go.minnstate.edu";
+    if (!str_ends_with(strtolower($email), $domain)) {
+        throw new InvalidArgumentException('Must be a MinnState email ending in @go.minnstate.edu');
     }
     //Ensure that thepassword isn't too long
     if (strlen($pass) < 6) {
@@ -36,7 +48,7 @@ class UserModel {
     }
 
     //Check is user already exists
-    $stmt = $this->db->prepare("SELECT 1 FROM Accounts WHERE email = ? LIMIT 1");
+    $stmt = $this->db->prepare("SELECT 1 FROM accounts WHERE email = ? LIMIT 1");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $exists = $stmt->get_result()->fetch_row();
@@ -49,8 +61,8 @@ class UserModel {
     //Hash password before storing
     $hash = password_hash($pass, PASSWORD_DEFAULT);
 
-    $sql_user = "INSERT INTO Accounts
-            (email, password, first_name, last_name, school_name, major, acad_role,city_state)
+    $sql_user = "INSERT INTO accounts
+            (email, password, first_name, last_name, school_name, major, acad_role, city_state)
             VALUES (?,?,?,?,?,?,?,?)";
 
     $stmt = $this->db->prepare($sql_user);
