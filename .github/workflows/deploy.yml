@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -20,9 +21,32 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -e
+
             cd ~/projects/CampusTrade/CampusTradeTTT-main
+
+            echo "Updating application code..."
+            git fetch origin main
             git checkout main
-            git pull origin main
-            docker compose up --build -d
-            docker ps
-            
+            git reset --hard origin/main
+
+            echo "Building and starting containers..."
+            docker compose --env-file .env.docker up --build -d --wait
+
+            echo "Displaying container status..."
+            docker compose --env-file .env.docker ps
+
+            echo "Checking CampusTrade HTTP response..."
+            for attempt in {1..12}; do
+              if curl --fail --silent --show-error http://localhost:8080/ > /dev/null; then
+                echo "CampusTrade deployment succeeded."
+                exit 0
+              fi
+
+              echo "Application not ready yet. Attempt ${attempt}/12..."
+              sleep 5
+            done
+
+            echo "CampusTrade health check failed."
+            docker compose --env-file .env.docker logs --tail=100 app
+            exit 1
