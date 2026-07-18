@@ -1,3 +1,9 @@
 .DS_Store
 .env
 .env.docker
+# User-generated uploads
+Uploads/*
+!Uploads/Books/
+!Uploads/Profiles/
+!Uploads/Books/.gitkeep
+!Uploads/Profiles/.gitkeep
