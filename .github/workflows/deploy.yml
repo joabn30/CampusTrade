@@ -10,7 +10,7 @@ jobs:
 deploy:
 runs-on: ubuntu-latest
 
-
+```
 steps:
   - name: Checkout Repository
     uses: actions/checkout@v4
@@ -36,10 +36,18 @@ steps:
         sudo chown -R 33:33 Uploads
         sudo chmod -R 775 Uploads
 
-        echo "Building and starting containers..."
-        docker compose --env-file .env.docker up --build -d --wait
+        echo "Validating Docker Compose configuration..."
+        docker compose --env-file .env.docker config
 
-        echo "Verifying upload directory permissions..."
+        echo "Building and starting containers..."
+        if ! docker compose --env-file .env.docker up --build -d; then
+          echo "Docker Compose failed to start."
+          docker compose --env-file .env.docker ps || true
+          docker compose --env-file .env.docker logs --tail=150 || true
+          exit 1
+        fi
+
+        echo "Restoring upload permissions..."
         sudo chown -R 33:33 Uploads
         sudo chmod -R 775 Uploads
 
@@ -58,5 +66,7 @@ steps:
         done
 
         echo "CampusTrade health check failed."
-        docker compose --env-file .env.docker logs --tail=100 app
+        docker compose --env-file .env.docker ps || true
+        docker compose --env-file .env.docker logs --tail=150 || true
         exit 1
+```
