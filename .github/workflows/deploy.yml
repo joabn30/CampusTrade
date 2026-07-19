@@ -25,12 +25,16 @@ jobs:
 
             cd ~/projects/CampusTrade/CampusTradeTTT-main
 
+            echo "Fixing repository upload permissions..."
+            sudo chown -R "$USER":"$USER" Uploads
+            sudo chmod -R u+rwX Uploads
+
             echo "Updating application code..."
             git fetch origin main
             git checkout main
             git reset --hard origin/main
 
-            echo "Preparing upload directories..."
+            echo "Preparing upload directories for Apache..."
             mkdir -p Uploads/Books Uploads/Profiles
             sudo chown -R 33:33 Uploads
             sudo chmod -R 775 Uploads
