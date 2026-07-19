@@ -1,70 +1,70 @@
 name: Deploy CampusTrade to AWS EC2
 
 on:
-push:
-branches:
-- main
-workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-deploy:
-runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: Checkout Repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-  - name: Deploy to EC2
-    uses: appleboy/ssh-action@v1.2.5
-    with:
-      host: ${{ secrets.EC2_HOST }}
-      username: ${{ secrets.EC2_USERNAME }}
-      key: ${{ secrets.EC2_SSH_KEY }}
-      script: |
-        set -e
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
 
-        cd ~/projects/CampusTrade/CampusTradeTTT-main
+            cd ~/projects/CampusTrade/CampusTradeTTT-main
 
-        echo "Updating application code..."
-        git fetch origin main
-        git checkout main
-        git reset --hard origin/main
+            echo "Updating application code..."
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
 
-        echo "Preparing upload directories..."
-        mkdir -p Uploads/Books Uploads/Profiles
-        sudo chown -R 33:33 Uploads
-        sudo chmod -R 775 Uploads
+            echo "Preparing upload directories..."
+            mkdir -p Uploads/Books Uploads/Profiles
+            sudo chown -R 33:33 Uploads
+            sudo chmod -R 775 Uploads
 
-        echo "Validating Docker Compose configuration..."
-        docker compose --env-file .env.docker config
+            echo "Validating Docker Compose configuration..."
+            docker compose --env-file .env.docker config
 
-        echo "Building and starting containers..."
-        if ! docker compose --env-file .env.docker up --build -d; then
-          echo "Docker Compose failed to start."
-          docker compose --env-file .env.docker ps || true
-          docker compose --env-file .env.docker logs --tail=150 || true
-          exit 1
-        fi
+            echo "Building and starting containers..."
+            if ! docker compose --env-file .env.docker up --build -d; then
+              echo "Docker Compose failed to start."
+              docker compose --env-file .env.docker ps || true
+              docker compose --env-file .env.docker logs --tail=150 || true
+              exit 1
+            fi
 
-        echo "Restoring upload permissions..."
-        sudo chown -R 33:33 Uploads
-        sudo chmod -R 775 Uploads
+            echo "Restoring upload permissions..."
+            sudo chown -R 33:33 Uploads
+            sudo chmod -R 775 Uploads
 
-        echo "Displaying container status..."
-        docker compose --env-file .env.docker ps
+            echo "Displaying container status..."
+            docker compose --env-file .env.docker ps
 
-        echo "Checking CampusTrade HTTP response..."
-        for attempt in {1..12}; do
-          if curl --fail --silent --show-error http://localhost:8080/ > /dev/null; then
-            echo "CampusTrade deployment succeeded."
-            exit 0
-          fi
+            echo "Checking CampusTrade HTTP response..."
+            for attempt in {1..12}; do
+              if curl --fail --silent --show-error http://localhost:8080/ > /dev/null; then
+                echo "CampusTrade deployment succeeded."
+                exit 0
+              fi
 
-          echo "Application not ready yet. Attempt ${attempt}/12..."
-          sleep 5
-        done
+              echo "Application not ready yet. Attempt ${attempt}/12..."
+              sleep 5
+            done
 
-        echo "CampusTrade health check failed."
-        docker compose --env-file .env.docker ps || true
-        docker compose --env-file .env.docker logs --tail=150 || true
-        exit 1
+            echo "CampusTrade health check failed."
+            docker compose --env-file .env.docker ps || true
+            docker compose --env-file .env.docker logs --tail=150 || true
+            exit 1
