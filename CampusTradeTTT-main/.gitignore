@@ -7,3 +7,5 @@ Uploads/*
 !Uploads/Profiles/
 !Uploads/Books/.gitkeep
 !Uploads/Profiles/.gitkeep
+
+/vendor/
