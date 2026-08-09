@@ -5,12 +5,11 @@ session_start();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $db = require __DIR__ . '/Database.php';
+require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/UserModel.php';
 
-// ---- Upload root ----
-$UPLOAD_ROOT = __DIR__ . DIRECTORY_SEPARATOR . 'Uploads' . DIRECTORY_SEPARATOR;
-
 $userModel = new UserModel($db);
+$s3Service = new \App\Services\S3Service();
 
 // =========================
 // Require login
@@ -37,37 +36,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = $file['error'];
 
         if ($error === UPLOAD_ERR_OK && $file['size'] > 0) {
+            $imagePath = null;
 
-            $uploadDir = $UPLOAD_ROOT . "Profiles/";
-            $webPrefix = "Uploads/Profiles/";
-
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0775, true);
-            }
-
-            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-            if (!in_array($ext, ['jpg','jpeg','png','gif','webp'])) {
-                $_SESSION['error'] = "Invalid image type.";
-                header("Location: Seller_Controller.php?profile=img_failed");
-                exit;
-            }
-
-            $fileName = 'avatar_' . $userId . '_' . time() . '_' . mt_rand(1000,9999) . '.' . $ext;
-            $fullPath = $uploadDir . $fileName;
-
-            if (!move_uploaded_file($file['tmp_name'], $fullPath)) {
-                $_SESSION['error'] = "Upload failed.";
-                header("Location: Seller_Controller.php?profile=img_failed");
-                exit;
-            }
-
-            $imagePath = $webPrefix . $fileName;
-            
             try {
-                $userModel->UpdateProfileImage($imagePath, $userId);
+                $profile = $userModel->ProfileExtraction();
+                $oldImagePath = $profile['profile_image'] ?? null;
+                $imagePath = $s3Service->uploadProfileImage($file);
+
+                if (!$userModel->UpdateProfileImage($imagePath, $userId)) {
+                    throw new RuntimeException('Profile image was uploaded, but the database was not updated.');
+                }
+
+                try {
+                    $s3Service->deleteImage($oldImagePath);
+                } catch (RuntimeException $cleanupError) {
+                    $_SESSION['error'] = $cleanupError->getMessage();
+                }
+
                 header("Location: Seller_Controller.php?profile=img_updated");
                 exit;
-            } catch (RuntimeException $e) {
+            } catch (InvalidArgumentException | RuntimeException $e) {
+                if ($imagePath !== null) {
+                    try {
+                        $s3Service->deleteImage($imagePath);
+                    } catch (RuntimeException $cleanupError) {
+                        // Keep the original upload/profile error visible to the user.
+                    }
+                }
+
                 $_SESSION['error'] = $e->getMessage();
                 header("Location: Seller_Controller.php?profile=img_failed");
                 exit;
@@ -136,26 +132,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = $file['error'];
 
             if ($error === UPLOAD_ERR_OK && $file['size'] > 0) {
-                $uploadDir = $UPLOAD_ROOT . 'Books' . DIRECTORY_SEPARATOR;
-
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0775, true);
+                try {
+                    $imagePath = $s3Service->uploadBookImage($file);
+                } catch (InvalidArgumentException | RuntimeException $e) {
+                    $_SESSION['error'] = $e->getMessage();
+                    header('Location: Seller_Controller.php?error=image_upload_failed');
+                    exit;
                 }
-
-                // Path stored in DB / used in <img src="...">
-                $webPrefix = 'Uploads/Books/';
-
-                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-                if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-                    $ext = 'jpg';
-                }
-
-                $fileName = 'book_' . $sellerId . '_' . time() . '_' . mt_rand(1000, 9999) . '.' . $ext;
-                $fullPath = $uploadDir . $fileName;
-
-                if (move_uploaded_file($file['tmp_name'], $fullPath)) {
-                    $imagePath = $webPrefix . $fileName;
-                }
+            } elseif ($error !== UPLOAD_ERR_NO_FILE) {
+                $_SESSION['error'] = 'Upload error code: ' . $error;
+                header('Location: Seller_Controller.php?error=image_upload_failed');
+                exit;
             }
         }
 
@@ -165,80 +152,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ";
 
-        $stmt = $db->prepare($sql);
-        $stmt->bind_param(
-            "isssissss",
-            $sellerId,
-            $titleAuthor,
-            $isbn,
-            $imagePath,
-            $price,
-            $bookState,
-            $status,
-            $courseDept,
-            $contact
-        );
-        $stmt->execute();
-        $stmt->close();
+        try {
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param(
+                "isssissss",
+                $sellerId,
+                $titleAuthor,
+                $isbn,
+                $imagePath,
+                $price,
+                $bookState,
+                $status,
+                $courseDept,
+                $contact
+            );
+            $stmt->execute();
+            $stmt->close();
+        } catch (mysqli_sql_exception $e) {
+            if ($imagePath !== null) {
+                try {
+                    $s3Service->deleteImage($imagePath);
+                } catch (RuntimeException $cleanupError) {
+                    // Keep the database error visible to the user.
+                }
+            }
+
+            $_SESSION['error'] = 'Book was not saved: ' . $e->getMessage();
+            header('Location: Seller_Controller.php?error=db_insert_failed');
+            exit;
+        }
 
         header('Location: Seller_Controller.php?posted=1');
         exit;
     }
 
-   /* ---- B) UPDATE PROFILE IMAGE ---- */
-if (isset($_POST['edit_profile'])) {
-
-    $newImagePath = null;
-
-    if (!empty($_FILES['profileImage']['name'])) {
-        $file  = $_FILES['profileImage'];
-        $error = $file['error'];
-
-        if ($error === UPLOAD_ERR_OK && $file['size'] > 0) {
-
-            $uploadDir = $UPLOAD_ROOT . 'Profiles' . DIRECTORY_SEPARATOR;
-            $webPrefix = 'Uploads/Profiles/';   // what we store in DB / use in <img src>
-
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0775, true);
-            }
-
-            // extension
-            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-            if (!in_array($ext, ['jpg','jpeg','png','gif','webp'])) {
-                $ext = 'jpg';
-            }
-
-            $fileName = 'avatar_' . $sellerId . '_' . time() . '_' . mt_rand(1000,9999) . '.' . $ext;
-            $fullPath = $uploadDir . $fileName;
-
-            if (move_uploaded_file($file['tmp_name'], $fullPath)) {
-                // this goes in DB
-                $newImagePath = $webPrefix . $fileName;
-            } else {
-                die('move_uploaded_file failed for profile image. Tried: ' . $fullPath);
-            }
-        } elseif ($error !== UPLOAD_ERR_NO_FILE) {
-            die('Upload error for profileImage. Error code: ' . $error);
-        }
+   /* ---- B) PROFILE IMAGE FORM WITHOUT A FILE ---- */
+    if (isset($_POST['edit_profile'])) {
+        header('Location: Seller_Controller.php?profile=updated');
+        exit;
     }
-
-    if ($newImagePath !== null) {
-        // Use the new safe UpdateProfileImage method
-        try {
-            $userModel->UpdateProfileImage($newImagePath, $sellerId);
-            // refresh current page variables
-            $vImgSrc = $newImagePath;
-        } catch (RuntimeException $e) {
-            $_SESSION['error'] = $e->getMessage();
-            header('Location: Seller_Controller.php?profile=img_failed');
-            exit;
-        }
-    }
-
-    header('Location: Seller_Controller.php?profile=updated');
-    exit;
-}
 
 
     /* ---- C) DELETE BOOK ---- */
@@ -246,11 +198,22 @@ if (isset($_POST['edit_profile'])) {
         $bookIdToDelete = isset($_POST['postedBook']) ? (int) $_POST['postedBook'] : 0;
 
         if ($bookIdToDelete > 0) {
+            $bookToDelete = $userModel->GetBookId($bookIdToDelete, $sellerId);
+
             $sql = "DELETE FROM booklistings WHERE id = ? AND seller_id = ?";
             $stmt = $db->prepare($sql);
             $stmt->bind_param("ii", $bookIdToDelete, $sellerId);
             $stmt->execute();
+            $deletedRows = $stmt->affected_rows;
             $stmt->close();
+
+            if ($deletedRows > 0 && !empty($bookToDelete['image_path'])) {
+                try {
+                    $s3Service->deleteImage($bookToDelete['image_path']);
+                } catch (RuntimeException $e) {
+                    $_SESSION['error'] = $e->getMessage();
+                }
+            }
         }
 
         header('Location: Seller_Controller.php?deleted=1');
@@ -310,23 +273,17 @@ if (isset($_POST['edit_profile'])) {
             $error = $file['error'];
 
             if ($error === UPLOAD_ERR_OK && $file['size'] > 0) {
-
-                $uploadDir = $UPLOAD_ROOT . "Books/";
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0775, true);
+                try {
+                    $newImagePath = $s3Service->uploadBookImage($file);
+                } catch (InvalidArgumentException | RuntimeException $e) {
+                    $_SESSION['error'] = $e->getMessage();
+                    header("Location: Seller_Controller.php");
+                    exit;
                 }
-
-                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-                if (!in_array($ext, ['jpg','jpeg','png','gif','webp'])) {
-                    $ext = 'jpg';
-                }
-
-                $fileName = 'book_' . $sellerId . '_' . time() . '_' . mt_rand(1000,9999) . '.' . $ext;
-                $fullPath = $uploadDir . $fileName;
-
-                if (move_uploaded_file($file['tmp_name'], $fullPath)) {
-                    $newImagePath = 'Uploads/Books/' . $fileName;
-                }
+            } elseif ($error !== UPLOAD_ERR_NO_FILE) {
+                $_SESSION['error'] = 'Upload error code: ' . $error;
+                header("Location: Seller_Controller.php");
+                exit;
             }
         }
 
@@ -334,10 +291,23 @@ if (isset($_POST['edit_profile'])) {
 
         try {
             $userModel->UpdateBook($Book_info, $sellerId);
+
+            if ($newImagePath !== $existingImage) {
+                $s3Service->deleteImage($existingImage);
+            }
+
             header("Location: Seller_Controller.php");
             exit;
 
         } catch (Exception $e) {
+            if ($newImagePath !== $existingImage) {
+                try {
+                    $s3Service->deleteImage($newImagePath);
+                } catch (RuntimeException $cleanupError) {
+                    // Keep the original database error visible to the user.
+                }
+            }
+
             $_SESSION['error'] = "Error: " . $e->getMessage();
             header("Location: Seller_Controller.php");
             exit;

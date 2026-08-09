@@ -9,3 +9,4 @@ Uploads/*
 !Uploads/Profiles/.gitkeep
 
 /vendor/
+cd

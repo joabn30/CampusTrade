@@ -41,9 +41,22 @@ include('header.php');
   <div class="profile-panel">
   <h2>Your Profile</h2>
 
-  <?php if (!empty($_GET['profile']) && $_GET['profile'] === 'updated'): ?>
+  <?php if (!empty($_SESSION['error'])): ?>
+    <p style="color: #b00020; font-weight: bold; margin-bottom: 10px;">
+      <?= htmlspecialchars($_SESSION['error']) ?>
+    </p>
+    <?php unset($_SESSION['error']); ?>
+  <?php endif; ?>
+
+  <?php if (!empty($_GET['profile']) && in_array($_GET['profile'], ['updated', 'img_updated'], true)): ?>
     <p style="color: green; font-weight: bold; margin-bottom: 10px;">
       Changes saved successfully!
+    </p>
+  <?php endif; ?>
+
+  <?php if (!empty($_GET['posted']) && $_GET['posted'] === '1'): ?>
+    <p style="color: green; font-weight: bold; margin-bottom: 10px;">
+      Book posted successfully!
     </p>
   <?php endif; ?>
 
