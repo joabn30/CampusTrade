@@ -13,8 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['flash_errors'] = ["Email and password fields can't be empty"];
         $_SESSION['old'] = $_POST;
         header('Location: LoginPage.php'); exit;
-        //Push Changes
-        
+
     }
 
     try {
