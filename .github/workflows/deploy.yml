@@ -20,6 +20,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+
           script: |
             set -e
 
@@ -43,7 +44,7 @@ jobs:
             docker compose --env-file .env.docker config
 
             echo "Building and starting containers..."
-            if ! docker compose --env-file .env.docker up --build -d; then
+            if ! docker compose --env-file .env.docker up --build -d --remove-orphans; then
               echo "Docker Compose failed to start."
               docker compose --env-file .env.docker ps || true
               docker compose --env-file .env.docker logs --tail=150 || true
@@ -58,6 +59,7 @@ jobs:
             docker compose --env-file .env.docker ps
 
             echo "Checking CampusTrade HTTP response..."
+
             for attempt in {1..12}; do
               if curl --fail --silent --show-error http://localhost:8080/ > /dev/null; then
                 echo "CampusTrade deployment succeeded."
@@ -72,4 +74,3 @@ jobs:
             docker compose --env-file .env.docker ps || true
             docker compose --env-file .env.docker logs --tail=150 || true
             exit 1
-            
