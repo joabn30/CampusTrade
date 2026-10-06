@@ -6,7 +6,7 @@ include('header.php');
 <main>
   <section class="content-section">
     <div class="about-box">
-      <!-- Left side: logo -->
+      
       <div class="about-left">
         <img src="Images/CampusTradeLogo.png" alt="CampusTrade Logo" class="about-logo">
       </div>
