@@ -1,0 +1,5 @@
+pytest>=8,<10
+
+pytest-playwright>=0.7,<1
+mysql-connector-python>=9,<27
+python-dotenv>=1,<2
