@@ -3,7 +3,7 @@ from playwright.sync_api import Page, expect
 from tests.helpers.db_helper import get_test_account
 import os
 
-BASE_URL = "http://localhost:8080"
+BASE_URL = os.getenv("BASE_URL", "http://localhost:8082")
 
 
 
