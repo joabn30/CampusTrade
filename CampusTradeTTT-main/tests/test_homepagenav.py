@@ -2,8 +2,9 @@
 from playwright.sync_api import Page, expect
 from tests.helpers.db_helper import get_test_account
 import os
+from conftest import app_url
 
-BASE_URL = os.getenv("BASE_URL", "http://localhost:8082")
+BASE_URL = app_url()
 
 
 

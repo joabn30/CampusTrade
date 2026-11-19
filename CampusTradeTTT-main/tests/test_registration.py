@@ -1,10 +1,11 @@
 
 from playwright.sync_api import Page, expect
+from conftest import app_url
 import uuid
 import os
 
 
-BASE_URL = "http://localhost:8080"
+BASE_URL = app_url()
 PASSWORD = os.getenv("QA_REGISTRATION_PASSWORD", "Kenya@12")
 
 

@@ -3,8 +3,9 @@ import os
 import uuid
 import pytest
 from playwright.sync_api import Page, expect
+from conftest import app_url
 
-BASE_URL = "http://localhost:8080"
+BASE_URL = app_url()
 
 
 def login_as_seller(page: Page):
